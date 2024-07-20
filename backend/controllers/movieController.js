@@ -56,7 +56,7 @@ exports.createRating = async(req, res, next) => {
             let avg = movie.rateAverage;
             let count = movie.voteCount;
 
-            const updatedMovie = await Movie.findByIdAndUpdate(req.params.id, {
+            await Movie.findByIdAndUpdate(req.params.id, {
                 voteCount: count+1,
                 rateAverage: Math.round(((avg*count + value)/(count+1))*10)/10
             });

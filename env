@@ -1,0 +1,4 @@
+DB_URL = mongodb+srv://sironicamila:TIPogHM39KSbCuuQ@cluster0.cjkl7nz.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0
+password = TIPogHM39KSbCuuQ
+PORT = 3000
+
