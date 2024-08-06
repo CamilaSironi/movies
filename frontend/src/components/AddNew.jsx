@@ -1,56 +1,61 @@
 /* eslint-disable react/prop-types */
-import { Modal, Form, Input, Select, InputNumber, notification } from "antd";
+import { Modal, Form, Input, Select, InputNumber } from "antd";
 
 const CATEGORIES = ["Action", "Science Fiction", "Drama", "Thriller", "Horror", "Comedy"];
 
-function AddNew({isModalOpen, setIsModalOpen, url}) {
+function AddNew({isModalOpen, setIsModalOpen, url, setIsToastOpen}) {
 
     const [form] = Form.useForm();
 
     const handleOk = () => {
-        setIsModalOpen(false);
-
         form
           .validateFields()
           .then((values) => {
+              setIsModalOpen(false);
               form.resetFields();
               console.log(values);
               onCreate(values);
           })
-        .catch((info) => {
-          console.log("Validate Failed:", info);
-        });
+          .catch((info) => {
+              console.log("Validation Failed:", info.errorFields[0].errors);
+          });
     } 
         
     const handleCancel = () => {
-      setIsModalOpen(false);
-    };
+        setIsModalOpen(false);
+        form.resetFields();
+    }
 
     const onCreate = async (values) => {
         try {
           const response = await fetch(url, {
-          method: "POST",
-          body: JSON.stringify(values),
-          headers: {
-            'Content-Type': 'application/json',
-            }
+              method: "POST",
+              body: JSON.stringify(values),
+              headers: {
+                'Content-Type': 'application/json',
+              }
           })
           console.log(response.status);
-
-        } catch(e) {
+          if(response.status != 200) {
+              setIsToastOpen(true);
+          }
+        } 
+        
+        catch(e) {
             console.log(e.message);
-            openNotificationWithIcon();
+            setIsToastOpen(true);
         }
     }
 
-    const openNotificationWithIcon = () => {
-      notification.error(
-        {message: 'Error',
-        description: 'An error occurred while processing your request.',
-        placement: 'bottomRight'
-      })
-        
-    };
+    const handleYearValidation = (_, value) => {
+        if (value && value < 1888) {
+            return Promise.reject(new Error('Release year must be above 1888'));
+        } 
+        else if (value && value > 2024) {
+            return Promise.reject(new Error('Release year must be below 2024'));
+        }
+        return Promise.resolve();
+    }
 
     return(
 
@@ -76,6 +81,10 @@ function AddNew({isModalOpen, setIsModalOpen, url}) {
             <Form.Item
                 label="Release Date"
                 name="releaseYear"
+                rules={[
+                  { required: true, message: 'Please input a release year' },
+                  {validator: handleYearValidation}
+                ]}
             >
                 <InputNumber />
             </Form.Item>
