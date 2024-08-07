@@ -8,7 +8,7 @@ const app = express();
 
 app.use(cors(
     {
-        origin:["https://movies-psi-flame.vercel.app/"],
+        origin:["https://movies-black-ten.vercel.app/"],
         methods: ["POST", "GET"],
         credentials: true
     }
