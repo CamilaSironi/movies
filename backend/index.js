@@ -37,8 +37,6 @@ app.use(express.json());
 
 //Paths to routers:
 
-app.get('/', (req, res) => res.status(200).json({message: "Hello"}))
-
 app.use('/api/v1/movies', movieRouter);
 
 module.exports = app;
