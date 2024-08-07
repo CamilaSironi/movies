@@ -114,6 +114,7 @@ function MainView() {
     }
 
     const showRateModal = (e) => {
+        console.log(e.target.id);
         setKey(e.target.id);
         setIsRateModalOpen(true);
     }
