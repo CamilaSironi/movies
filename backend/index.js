@@ -8,7 +8,7 @@ const app = express();
 
 app.use(cors(
     {
-        origin:["https://movies-front-five.vercel.app/"],
+        origin:["https://movies-front-five.vercel.app"],
         methods: ["POST", "GET"],
         credentials: true
     }
