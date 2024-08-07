@@ -3,7 +3,7 @@ import {Modal,Rate} from 'antd';
 import { useState } from 'react';
 
 function RateModal ({isRateModalOpen, setIsRateModalOpen, id}) {
-    let URL = `https://movies-black-ten.vercel.app/${id}/ratings`;
+    let URL = `https://movies-black-ten.vercel.app/api/v1/movies/${id}/ratings`;
 
     const [value, setValue] = useState(0);
 
