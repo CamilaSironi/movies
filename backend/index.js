@@ -6,7 +6,13 @@ const movieRouter = require('./routers/movieRouter');
 
 const app = express();
 
-app.use(cors());
+app.use(cors(
+    {
+        origin:["https://movies-psi-flame.vercel.app/"],
+        methods: ["POST", "GET"],
+        credentials: true
+    }
+));
 
 app.use(express.json());
 
