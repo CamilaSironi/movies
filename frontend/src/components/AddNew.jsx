@@ -1,11 +1,25 @@
 /* eslint-disable react/prop-types */
-import { Modal, Form, Input, Select, InputNumber } from "antd";
+import { Modal, Form, Input, Select, InputNumber, notification } from "antd";
+import {SmileOutlined, WarningOutlined} from "@ant-design/icons";
+import { useEffect, useRef } from "react";
 
 const CATEGORIES = ["Action", "Science Fiction", "Drama", "Thriller", "Horror", "Comedy"];
 
-function AddNew({isModalOpen, setIsModalOpen, url, setIsToastOpen}) {
+function AddNew({isModalOpen, setIsModalOpen, url}) {
 
     const [form] = Form.useForm();
+
+    const useFirstRender = () => {
+        const firstRender = useRef(true);
+      
+        useEffect(() => {
+          firstRender.current = false;
+        }, []);
+      
+        return firstRender.current;
+    }
+
+    const firstRender = useFirstRender();
 
     const handleOk = () => {
         form
@@ -13,7 +27,6 @@ function AddNew({isModalOpen, setIsModalOpen, url, setIsToastOpen}) {
           .then((values) => {
               setIsModalOpen(false);
               form.resetFields();
-              console.log(values);
               onCreate(values);
           })
           .catch((info) => {
@@ -26,6 +39,16 @@ function AddNew({isModalOpen, setIsModalOpen, url, setIsToastOpen}) {
         form.resetFields();
     }
 
+    const showToast = (msg, description, icon) => {
+        if(!firstRender){
+            notification.open({
+                message: msg,
+                description: description,
+                icon: (icon)
+            });
+        }
+    }
+
     const onCreate = async (values) => {
         try {
           const response = await fetch(url, {
@@ -36,14 +59,17 @@ function AddNew({isModalOpen, setIsModalOpen, url, setIsToastOpen}) {
               }
           })
           console.log(response.status);
-          if(response.status != 200) {
-              setIsToastOpen(true);
+          if(response.status > 199 && response.status < 300) {
+            showToast("Good news!", "Your movie was added succesfully", <SmileOutlined/>);
+          }
+          else {
+            showToast("Bad news!", "There was a problem with your request", <WarningOutlined />);
           }
         } 
         
         catch(e) {
             console.log(e.message);
-            setIsToastOpen(true);
+            showToast("Bad", e.message, <WarningOutlined />);
         }
     }
 

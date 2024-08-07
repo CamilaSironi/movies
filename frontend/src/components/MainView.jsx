@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {Button, Table, notification} from "antd";
-import {useEffect, useRef, useState} from "react";
+import {Button, Table} from "antd";
+import {useEffect, useState} from "react";
 import AddNew from "./AddNew";
 import RateModal from "./RateModal";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const URL= 'https://movies-black-ten.vercel.app/api/v1/movies';
 
@@ -14,21 +15,7 @@ function MainView() {
 
     const [isRateModalOpen, setIsRateModalOpen] = useState(false);
 
-    const [isToastOpen, setIsToastOpen] = useState(false);
-
     const [key, setKey] = useState();
-
-    const useFirstRender = () => {
-        const firstRender = useRef(true);
-      
-        useEffect(() => {
-          firstRender.current = false;
-        }, []);
-      
-        return firstRender.current;
-    }
-
-    const firstRender = useFirstRender();
 
     const getMovies = async () => {
         try {
@@ -36,36 +23,18 @@ function MainView() {
             if (!res.ok) {
                 throw new Error(`Response status: ${res.status}`);
             }
-            const movies = await res.json();
-            setData(() =>
-                movies.data
-                /*data.map((item) => ({
-                  ...item,
-                  key: movies.data.id
-                }))*/
-            ) 
+            console.log(res.status);
+            const movies = await res.json()
+            setData(() => movies.data)            
 
         } catch (error) {
             console.error(error.message);
         }
     }
-      
-    const showToast = () => {
-        notification.open({
-            message: 'Warning',
-            description: 'An error ocurred while processing your request'
-        });
-    }
 
     useEffect(() => {
         getMovies()
-    }, [data])
-
-    useEffect(() => {
-        if(!firstRender){
-            showToast()
-        }
-    }, [isToastOpen])
+    }, [])
       
     const columns = [
         {
@@ -92,11 +61,13 @@ function MainView() {
             ) 
         },
         { 
-            title: 'Action', 
+            title: 'Actions', 
             dataIndex: '_id', 
             key: '_id', 
             render: (key) => (
+                <>
                     <Button id={key} onClick={showRateModal} type="primary">Add Rate</Button>
+                </>
             ) 
         }
     ]
@@ -104,7 +75,7 @@ function MainView() {
     if(!data ){
         return(
             <>
-                Loading...
+                Loading <LoadingOutlined />
             </>
         )
     }
@@ -114,17 +85,16 @@ function MainView() {
     }
 
     const showRateModal = (e) => {
-        console.log(e.target.id);
-        setKey(e.target.id);
+        setKey(e.currentTarget.id);
         setIsRateModalOpen(true);
     }
 
     return(
-        <>
+        <>  
             <h2>List of Movies</h2>
-            {data && <Table dataSource={data} columns={columns} />}
+            {data && <Table rowKey={obj => obj._id} dataSource={data} columns={columns} />}
             <Button onClick={showModal}>Add new</Button>
-            <AddNew isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} url={URL} setIsToastOpen={setIsToastOpen}/>
+            <AddNew isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} url={URL} />
             <RateModal isRateModalOpen={isRateModalOpen} setIsRateModalOpen={setIsRateModalOpen} id={key}/>
         </>
     )
