@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from "react";
 import AddNew from "./AddNew";
 import RateModal from "./RateModal";
 
-const URL= 'https://movies-black-ten.vercel.app/';
+const URL= 'https://movies-black-ten.vercel.app/api/v1/movies';
 
 function MainView() {
 
